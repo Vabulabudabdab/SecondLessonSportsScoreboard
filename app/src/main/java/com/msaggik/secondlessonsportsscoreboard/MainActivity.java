@@ -16,8 +16,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView score; // табло бля вывода счёта игры
     private Button lionsTeam, panthersTeam; // кнопки команд
     private int countLions = 0, countPanthers = 0; // счётчики счёта команд
-    private static final int testCountLions = 0;
-    private static final int testCountPanthers = 1;
     final String LOG_TAG = "myLogs";
     // создание активности
     @Override
@@ -25,7 +23,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Toast.makeText(this, "Создание активности", Toast.LENGTH_SHORT).show();
         setContentView(R.layout.activity_main);
-
+        if(savedInstanceState != null) {
+            countLions = savedInstanceState.getInt("countLions");
+            countPanthers = savedInstanceState.getInt("countPanthers");
+        }
         // привязка разметки к полям
         score = findViewById(R.id.score);
         lionsTeam = findViewById(R.id.lionsTeam);
@@ -34,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         // обработка нажатия кнопок
         lionsTeam.setOnClickListener(listener);
         panthersTeam.setOnClickListener(listener);
+        score.setText(String.format("%02d", countLions) + " : " + String.format("%02d", countPanthers));
 
-        savedInstanceState.putInt("counter", -1);
     }
 
 
@@ -56,6 +57,13 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onSaveInstanceState (Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+        savedInstanceState.putInt("countLions", countLions);
+        savedInstanceState.putInt("countPanthers", countPanthers);
+    }
 
 
     // отзыв взаимодействия с активностью
@@ -66,18 +74,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     // скрытие активности
     @Override
     protected void onStop() {
         super.onStop();
         Toast.makeText(this, "Скрытие активности", Toast.LENGTH_SHORT).show();
-
-    }
-
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-
-        super.onRestoreInstanceState(savedInstanceState);
-
 
     }
 
@@ -89,15 +91,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    protected void OnSaveInstanceState (Bundle outState)
-    {
-        outState.putInt("counter", countLions);
-        outState.putInt("counter", countPanthers);
-        OnSaveInstanceState(outState);
-    }
 
 
-    // обпределение слушателя
+    // определение слушателя
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
